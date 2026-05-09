@@ -1,0 +1,14 @@
+NETGROK DISCLAIMER
+
+This file is provided for informational purposes only and does not replace the official license.
+
+NETGROK is an open-source educational project created for learning and research purposes.
+
+By using this software, you agree that:
+- The author is not responsible for any misuse of this tool.
+- The software is provided "AS IS", without any warranty.
+- Any modification or redistribution is done at your own responsibility.
+
+This project is intended for educational and ethical use only.
+
+Misuse of this software for illegal activities is strongly discouraged.
