@@ -1,5 +1,5 @@
 // ==========================================
-// NETGROK v0.2 FOR TERMUX
+// NETGROK v0.3 FOR TERMUX
 // Android Network Toolkit
 // ==========================================
 
@@ -27,6 +27,7 @@ void banner() {
 ╚═╝  ╚═══╝╚══════╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝
 
         NETWORK TOOLKIT FOR TERMUX
+               v0.3
 
 )" << endl;
 }
@@ -180,6 +181,64 @@ void deviceInfo() {
 }
 
 // ==========================================
+// PORT SCANNER (RANGE)
+// ==========================================
+
+void portScanner() {
+    system("clear");
+    string host;
+    int startPort, endPort;
+
+    cout << "=== PORT SCANNER (RANGE) ===\n\n";
+    cout << "Target IP or hostname: ";
+    cin >> host;
+
+    cout << "Start port (1-65535): ";
+    cin >> startPort;
+    cout << "End port: ";
+    cin >> endPort;
+
+    if (startPort < 1 || endPort > 65535 || startPort > endPort) {
+        cout << "\nInvalid port range.\n";
+        waitEnter();
+        return;
+    }
+
+    cout << "\nScanning " << host << " from port " << startPort << " to " << endPort << "...\n";
+    cout << "(This may take a while)\n\n";
+
+    // Usamos bash para probar conexión TCP con timeout de 1 segundo
+    string command = "for p in $(seq " + to_string(startPort) + " " + to_string(endPort) + "); do (echo >/dev/tcp/" + host + "/$p) 2>/dev/null && echo \"[OPEN] Port $p\"; done";
+
+    // Ejecutamos el comando dentro de bash
+    system(("bash -c '" + command + "'").c_str());
+
+    cout << "\nScan completed.\n";
+    waitEnter();
+}
+
+// ==========================================
+// COMMON PORTS SCANNER (FAST)
+// ==========================================
+
+void commonPortsScanner() {
+    system("clear");
+    string host;
+    cout << "=== FAST SCAN (COMMON PORTS) ===\n\nTarget: ";
+    cin >> host;
+
+    int commonPorts[] = {21,22,23,25,53,80,110,135,139,143,443,445,993,995,1723,3306,3389,5432,5900,8080};
+    int size = sizeof(commonPorts)/sizeof(commonPorts[0]);
+
+    cout << "\nScanning common ports...\n\n";
+    for (int i = 0; i < size; i++) {
+        string cmd = "bash -c \"(echo >/dev/tcp/" + host + "/" + to_string(commonPorts[i]) + ") 2>/dev/null && echo '[OPEN] Port " + to_string(commonPorts[i]) + "'\"";
+        system(cmd.c_str());
+    }
+    waitEnter();
+}
+
+// ==========================================
 // MAIN MENU
 // ==========================================
 
@@ -199,6 +258,8 @@ int main() {
         cout << "[6] WiFi Information\n";
         cout << "[7] Public IP\n";
         cout << "[8] Device Information\n";
+        cout << "[9] Port Scanner (range)\n";
+        cout << "[10] Fast Scan (common ports)\n";
         cout << "[0] Exit\n\n";
 
         cout << "Select option: ";
@@ -238,6 +299,14 @@ int main() {
                 deviceInfo();
                 break;
 
+            case 9:
+                portScanner();
+                break;
+
+            case 10:
+                commonPortsScanner();
+                break;
+
             case 0:
                 system("clear");
                 cout << "Goodbye.\n";
@@ -251,4 +320,3 @@ int main() {
 
     return 0;
 }
-
