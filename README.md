@@ -39,6 +39,8 @@ The project will continue improving over time.
 - System monitor
 - Battery information
 - Device information
+- IP geolocator
+- Scan ports
 
 ---
 
@@ -76,6 +78,7 @@ pkg install termux-api
 pkg install curl
 pkg install iproute2
 pkg install procps
+pkg install python
 
 Compile:
 
