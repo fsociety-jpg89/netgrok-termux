@@ -202,6 +202,27 @@ void commonPortsScanner() {
 }
 
 // ==========================================
+// GEO IP
+// ==========================================
+
+void geoIP() {
+    string ip;
+
+    cout << "=== GEO IP LOCATION ===\n\n";
+    cout << "Enter IP or domain (e.g., 8.8.8.8 or google.com): ";
+    cin >> ip;
+
+    cout << "\nQuerying...\n\n";
+
+    string cmd = "curl -s \"http://ip-api.com/json/" + ip + "\" | python3 -c \"\n\
+                                            import sys, json\ntry:\n    data = json.load(sys.stdin)\n    if data['status'] == 'success':\n        print('IP:', data['query'])\n        print('Country:', data['country'])\n        print('City:', data['city'])\n        print('Region:', data['regionName'])\n        print('Postal Code:', data.get('zip', 'N/A'))\n        print('ISP:', data['isp'])\n        print('Coordinates:', data['lat'], ',', data['lon'])\n        print('Timezone:', data['timezone'])\n    else:\n        print('Error:', data.get('message', 'Could not geolocate'))\nexcept:\n    print('Error processing response')\n\"";
+
+    system(cmd.c_str());
+
+    cout << "\n";
+}
+
+// ==========================================
 // MAIN MENU
 // ==========================================
 
@@ -209,8 +230,9 @@ int main() {
     void (*options[])() = {
         networkInfo, pingHost, activeConnections, systemMonitor,
         batteryInfo, wifiInfo, publicIP, deviceInfo, portScanner,
-        commonPortsScanner
+        commonPortsScanner, geoIP
     };
+    const int OPTIONS_LEN = 11 + 1;
     int option;
 
     while(true) {
@@ -227,6 +249,7 @@ int main() {
         cout << "[8] Device Information\n";
         cout << "[9] Port Scanner (range)\n";
         cout << "[10] Fast Scan (common ports)\n";
+        cout << "[11] Geo IP Location\n";
         cout << "[0] Exit\n\n";
 
         cout << "Select option: ";
@@ -239,7 +262,7 @@ int main() {
             return 0;
         }
         // Option selector
-        if (option > 0 && option < 11) {
+        if (option > 0 && option < OPTIONS_LEN) {
             system("clear");
             options[option - 1]();
             waitEnter();
