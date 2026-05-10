@@ -27,7 +27,7 @@ void banner() {
 ╚═╝  ╚═══╝╚══════╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝
 
         NETWORK TOOLKIT FOR TERMUX
-               v0.3
+               
 
 )" << endl;
 }
@@ -207,10 +207,8 @@ void portScanner() {
     cout << "\nScanning " << host << " from port " << startPort << " to " << endPort << "...\n";
     cout << "(This may take a while)\n\n";
 
-    // Usamos bash para probar conexión TCP con timeout de 1 segundo
     string command = "for p in $(seq " + to_string(startPort) + " " + to_string(endPort) + "); do (echo >/dev/tcp/" + host + "/$p) 2>/dev/null && echo \"[OPEN] Port $p\"; done";
 
-    // Ejecutamos el comando dentro de bash
     system(("bash -c '" + command + "'").c_str());
 
     cout << "\nScan completed.\n";
@@ -239,6 +237,29 @@ void commonPortsScanner() {
 }
 
 // ==========================================
+// GEO IP LOCATION
+// ==========================================
+
+void geoIP() {
+    system("clear");
+    string ip;
+    
+    cout << "=== GEO IP LOCATION ===\n\n";
+    cout << "Enter IP or domain (e.g., 8.8.8.8 or google.com): ";
+    cin >> ip;
+    
+    cout << "\nQuerying...\n\n";
+    
+    string cmd = "curl -s \"http://ip-api.com/json/" + ip + "\" | python3 -c \"\n\
+import sys, json\ntry:\n    data = json.load(sys.stdin)\n    if data['status'] == 'success':\n        print('IP:', data['query'])\n        print('Country:', data['country'])\n        print('City:', data['city'])\n        print('Region:', data['regionName'])\n        print('Postal Code:', data.get('zip', 'N/A'))\n        print('ISP:', data['isp'])\n        print('Coordinates:', data['lat'], ',', data['lon'])\n        print('Timezone:', data['timezone'])\n    else:\n        print('Error:', data.get('message', 'Could not geolocate'))\nexcept:\n    print('Error processing response')\n\"";
+    
+    system(cmd.c_str());
+    
+    cout << "\n";
+    waitEnter();
+}
+
+// ==========================================
 // MAIN MENU
 // ==========================================
 
@@ -260,6 +281,7 @@ int main() {
         cout << "[8] Device Information\n";
         cout << "[9] Port Scanner (range)\n";
         cout << "[10] Fast Scan (common ports)\n";
+        cout << "[11] Geo IP Location\n";
         cout << "[0] Exit\n\n";
 
         cout << "Select option: ";
@@ -305,6 +327,10 @@ int main() {
 
             case 10:
                 commonPortsScanner();
+                break;
+
+            case 11:
+                geoIP();
                 break;
 
             case 0:
