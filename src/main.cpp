@@ -173,10 +173,8 @@ void portScanner() {
     cout << "\nScanning " << host << " from port " << startPort << " to " << endPort << "...\n";
     cout << "(This may take a while)\n\n";
 
-    // Usamos bash para probar conexión TCP con timeout de 1 segundo
     string command = "for p in $(seq " + to_string(startPort) + " " + to_string(endPort) + "); do (echo >/dev/tcp/" + host + "/$p) 2>/dev/null && echo \"[OPEN] Port $p\"; done";
 
-    // Ejecutamos el comando dentro de bash
     system(("bash -c '" + command + "'").c_str());
 
     cout << "\nScan completed.\n";
