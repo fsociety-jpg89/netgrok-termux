@@ -49,8 +49,6 @@ void waitEnter() {
 
 void networkInfo() {
 
-    system("clear");
-
     cout << "=== WIFI INFORMATION ===\n\n";
 
     system("termux-wifi-connectioninfo");
@@ -58,8 +56,6 @@ void networkInfo() {
     cout << "\n=== DEVICE IP ===\n\n";
 
     system("termux-wifi-connectioninfo");
-
-    waitEnter();
 }
 
 // ==========================================
@@ -70,8 +66,6 @@ void pingHost() {
 
     string host;
 
-    system("clear");
-
     cout << "=== PING HOST ===\n\n";
 
     cout << "Enter host/IP: ";
@@ -80,8 +74,6 @@ void pingHost() {
     string command = "ping -c 4 " + host;
 
     system(command.c_str());
-
-    waitEnter();
 }
 
 // ==========================================
@@ -90,13 +82,9 @@ void pingHost() {
 
 void activeConnections() {
 
-    system("clear");
-
     cout << "=== ACTIVE CONNECTIONS ===\n\n";
 
     system("ss -tun 2>/dev/null");
-
-    waitEnter();
 }
 
 // ==========================================
@@ -105,13 +93,9 @@ void activeConnections() {
 
 void systemMonitor() {
 
-    system("clear");
-
     cout << "=== SYSTEM MONITOR ===\n\n";
 
     system("top -n 1 | head -20");
-
-    waitEnter();
 }
 
 // ==========================================
@@ -120,13 +104,9 @@ void systemMonitor() {
 
 void batteryInfo() {
 
-    system("clear");
-
     cout << "=== BATTERY INFORMATION ===\n\n";
 
     system("termux-battery-status");
-
-    waitEnter();
 }
 
 // ==========================================
@@ -135,13 +115,9 @@ void batteryInfo() {
 
 void wifiInfo() {
 
-    system("clear");
-
     cout << "=== WIFI STATUS ===\n\n";
 
     system("termux-wifi-connectioninfo");
-
-    waitEnter();
 }
 
 // ==========================================
@@ -150,15 +126,11 @@ void wifiInfo() {
 
 void publicIP() {
 
-    system("clear");
-
     cout << "=== PUBLIC IP ===\n\n";
 
     system("curl ifconfig.me");
 
     cout << endl;
-
-    waitEnter();
 }
 
 // ==========================================
@@ -167,8 +139,6 @@ void publicIP() {
 
 void deviceInfo() {
 
-    system("clear");
-
     cout << "=== DEVICE INFORMATION ===\n\n";
 
     system("getprop ro.product.model");
@@ -176,8 +146,6 @@ void deviceInfo() {
     cout << "\n=== ANDROID VERSION ===\n\n";
 
     system("getprop ro.build.version.release");
-
-    waitEnter();
 }
 
 // ==========================================
@@ -185,7 +153,6 @@ void deviceInfo() {
 // ==========================================
 
 void portScanner() {
-    system("clear");
     string host;
     int startPort, endPort;
 
@@ -200,7 +167,6 @@ void portScanner() {
 
     if (startPort < 1 || endPort > 65535 || startPort > endPort) {
         cout << "\nInvalid port range.\n";
-        waitEnter();
         return;
     }
 
@@ -214,7 +180,6 @@ void portScanner() {
     system(("bash -c '" + command + "'").c_str());
 
     cout << "\nScan completed.\n";
-    waitEnter();
 }
 
 // ==========================================
@@ -222,7 +187,6 @@ void portScanner() {
 // ==========================================
 
 void commonPortsScanner() {
-    system("clear");
     string host;
     cout << "=== FAST SCAN (COMMON PORTS) ===\n\nTarget: ";
     cin >> host;
@@ -235,7 +199,6 @@ void commonPortsScanner() {
         string cmd = "bash -c \"(echo >/dev/tcp/" + host + "/" + to_string(commonPorts[i]) + ") 2>/dev/null && echo '[OPEN] Port " + to_string(commonPorts[i]) + "'\"";
         system(cmd.c_str());
     }
-    waitEnter();
 }
 
 // ==========================================
@@ -243,7 +206,11 @@ void commonPortsScanner() {
 // ==========================================
 
 int main() {
-
+    void (*options[])() = {
+        networkInfo, pingHost, activeConnections, systemMonitor,
+        batteryInfo, wifiInfo, publicIP, deviceInfo, portScanner,
+        commonPortsScanner
+    };
     int option;
 
     while(true) {
@@ -265,56 +232,21 @@ int main() {
         cout << "Select option: ";
         cin >> option;
 
-        switch(option) {
-
-            case 1:
-                networkInfo();
-                break;
-
-            case 2:
-                pingHost();
-                break;
-
-            case 3:
-                activeConnections();
-                break;
-
-            case 4:
-                systemMonitor();
-                break;
-
-            case 5:
-                batteryInfo();
-                break;
-
-            case 6:
-                wifiInfo();
-                break;
-
-            case 7:
-                publicIP();
-                break;
-
-            case 8:
-                deviceInfo();
-                break;
-
-            case 9:
-                portScanner();
-                break;
-
-            case 10:
-                commonPortsScanner();
-                break;
-
-            case 0:
-                system("clear");
-                cout << "Goodbye.\n";
-                return 0;
-
-            default:
-                cout << "\nInvalid option.\n";
-                sleep(1);
+        // Exit case
+        if (option == 0) {
+            system("clear");
+            cout << "Goodbye.\n";
+            return 0;
+        }
+        // Option selector
+        if (option > 0 && option < 11) {
+            system("clear");
+            options[option - 1]();
+            waitEnter();
+        // Default case
+        } else {
+            cout << "\nInvalid option.\n";
+            sleep(1);
         }
     }
 
