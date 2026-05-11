@@ -260,6 +260,25 @@ import sys, json\ntry:\n    data = json.load(sys.stdin)\n    if data['status'] =
 }
 
 // ==========================================
+// WIFI NETWORK SCANNER
+// ==========================================
+
+void wifiScanner() {
+    system("clear");
+    
+    cout << "=== WIFI NETWORK SCANNER ===\n\n";
+    cout << "Scanning for nearby WiFi networks...\n\n";
+    
+    string cmd = "termux-wifi-scaninfo 2>/dev/null | python3 -c \"\n\
+import sys, json\ntry:\n    data = json.load(sys.stdin)\n    print('SSID'.ljust(25), 'BSSID (MAC)'.ljust(20), 'Channel'.ljust(8), 'Signal (dBm)'.ljust(12))\n    print('-' * 70)\n    for ap in data:\n        ssid = ap.get('ssid', 'Hidden')\n        bssid = ap.get('bssid', 'Unknown')\n        channel = ap.get('channel', 'N/A')\n        rssi = ap.get('rssi', 'N/A')\n        print(ssid[:24].ljust(25), bssid.ljust(20), str(channel).ljust(8), str(rssi).ljust(12))\nexcept:\n    print('Error: Could not scan networks.')\n    print('Make sure you have termux-api installed and WiFi permission granted.')\n\"";
+    
+    system(cmd.c_str());
+    
+    cout << "\n";
+    waitEnter();
+}
+
+// ==========================================
 // MAIN MENU
 // ==========================================
 
@@ -282,6 +301,7 @@ int main() {
         cout << "[9] Port Scanner (range)\n";
         cout << "[10] Fast Scan (common ports)\n";
         cout << "[11] Geo IP Location\n";
+        cout << "[12] WiFi Network Scanner\n";
         cout << "[0] Exit\n\n";
 
         cout << "Select option: ";
@@ -331,6 +351,10 @@ int main() {
 
             case 11:
                 geoIP();
+                break;
+
+            case 12:
+                wifiScanner();
                 break;
 
             case 0:
