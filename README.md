@@ -79,6 +79,9 @@ pkg install curl
 pkg install iproute2
 pkg install procps
 pkg install python
+pkg install traceroute
+pkg install dnsutils
+pkg install net-tools
 
 Compile:
 
